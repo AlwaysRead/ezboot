@@ -51,6 +51,13 @@ Launch EzBoot from your terminal:
 ezboot
 ```
 
+
+## Uninstallation
+
+```bash
+sudo rm /usr/bin/ezboot
+```
+
 ## Built With
 
 - [Rust](https://www.rust-lang.org/) - Systems programming language
