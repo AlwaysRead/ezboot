@@ -25,15 +25,6 @@ EzBoot is a fast, intuitive rust based TUI tool that makes managing your UEFI bo
 
 ## Installation
 
-### Arch Linux
-
-```bash
-git clone https://github.com/AlwaysRead/ezboot.git
-cd ezboot
-makepkg -s
-sudo pacman -U ezboot-git-*.pkg.tar.zst
-```
-
 ### Build from Source
 
 ```bash
