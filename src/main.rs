@@ -48,7 +48,10 @@ enum UIState {
     ErrorMessage(String),
 }
 
-fn execute_sudo_command(args: &[&str], password: &str) -> Result<(bool, String), Box<dyn std::error::Error>> {
+fn execute_sudo_command(
+    args: &[&str],
+    password: &str,
+) -> Result<(bool, String), Box<dyn std::error::Error>> {
     let mut child = Command::new("sudo")
         .arg("-S")
         .args(args)
@@ -56,38 +59,44 @@ fn execute_sudo_command(args: &[&str], password: &str) -> Result<(bool, String),
         .stdout(Stdio::piped())
         .stderr(Stdio::piped())
         .spawn()?;
-    
+
     if let Some(mut stdin) = child.stdin.take() {
         stdin.write_all(password.as_bytes())?;
         stdin.write_all(b"\n")?;
         stdin.flush()?;
         drop(stdin);
     }
-    
+
     let output = child.wait_with_output()?;
-    
+
     let stderr_text = String::from_utf8_lossy(&output.stderr).to_string();
-    
+
     if stderr_text.contains("Sorry") || stderr_text.contains("try again") {
         return Ok((false, "Incorrect password".to_string()));
     }
-    
+
     if !output.status.success() {
         let error_msg = if !stderr_text.trim().is_empty() {
             stderr_text.trim().to_string()
         } else {
-            format!("Command failed with exit code: {}", output.status.code().unwrap_or(-1))
+            format!(
+                "Command failed with exit code: {}",
+                output.status.code().unwrap_or(-1)
+            )
         };
         return Ok((false, error_msg));
     }
-    
+
     Ok((true, String::new()))
 }
 
-fn execute_set_boot_order(order_ids: &[String], password: &str) -> Result<UIState, Box<dyn std::error::Error>> {
+fn execute_set_boot_order(
+    order_ids: &[String],
+    password: &str,
+) -> Result<UIState, Box<dyn std::error::Error>> {
     let order = order_ids.join(",");
     let result = execute_sudo_command(&["efibootmgr", "-o", &order], password)?;
-    
+
     if result.0 {
         Ok(UIState::ConfirmReboot)
     } else if result.1 == "Incorrect password" {
@@ -99,7 +108,7 @@ fn execute_set_boot_order(order_ids: &[String], password: &str) -> Result<UIStat
 
 fn execute_boot_once(id: &str, password: &str) -> Result<UIState, Box<dyn std::error::Error>> {
     let result = execute_sudo_command(&["efibootmgr", "-n", id], password)?;
-    
+
     if result.0 {
         Ok(UIState::CountdownReboot(5))
     } else if result.1 == "Incorrect password" {
@@ -130,9 +139,7 @@ fn centered_area(area: Rect, width_pct: u16, height_pct: u16) -> Rect {
 }
 
 fn fetch_boot_entries() -> Result<Vec<BootEntry>, Box<dyn std::error::Error>> {
-    let output = Command::new("efibootmgr")
-        .arg("-v")
-        .output()?;
+    let output = Command::new("efibootmgr").arg("-v").output()?;
 
     if !output.status.success() {
         return Err("Failed to run efibootmgr. Are you running on a UEFI system?".into());
@@ -141,7 +148,8 @@ fn fetch_boot_entries() -> Result<Vec<BootEntry>, Box<dyn std::error::Error>> {
     let text = String::from_utf8_lossy(&output.stdout);
     let regex = Regex::new(r"Boot(?P<id>[0-9A-Fa-f]{4})\*?\s+(?P<name>[^\t\(]+)").unwrap();
 
-    let entries = text.lines()
+    let entries = text
+        .lines()
         .filter_map(|line| {
             regex.captures(line).map(|cap| BootEntry {
                 id: cap["id"].trim().to_string(),
@@ -149,21 +157,21 @@ fn fetch_boot_entries() -> Result<Vec<BootEntry>, Box<dyn std::error::Error>> {
             })
         })
         .collect();
-    
+
     Ok(entries)
 }
 
 fn fetch_boot_order() -> Result<Vec<String>, Box<dyn std::error::Error>> {
-    let output = Command::new("efibootmgr")
-        .output()?;
-    
+    let output = Command::new("efibootmgr").output()?;
+
     if !output.status.success() {
         return Err("Failed to run efibootmgr".into());
     }
-    
+
     let text = String::from_utf8_lossy(&output.stdout);
 
-    let order = text.lines()
+    let order = text
+        .lines()
         .find(|l| l.starts_with("BootOrder:"))
         .map(|l| {
             l["BootOrder:".len()..]
@@ -173,7 +181,7 @@ fn fetch_boot_order() -> Result<Vec<String>, Box<dyn std::error::Error>> {
                 .collect()
         })
         .unwrap_or_default();
-    
+
     Ok(order)
 }
 
@@ -198,7 +206,7 @@ fn draw_main_ui(
 
     // Title
     f.render_widget(
-        Paragraph::new("Boot Switcher")
+        Paragraph::new("SwiftBoot")
             .style(Style::default().fg(Color::Cyan).bold())
             .alignment(Alignment::Center),
         layout[0],
@@ -214,7 +222,11 @@ fn draw_main_ui(
             } else {
                 Style::default().fg(Color::White)
             };
-            let marker = if e.id == current_boot_id { " →" } else { "  " };
+            let marker = if e.id == current_boot_id {
+                " →"
+            } else {
+                "  "
+            };
             ListItem::new(format!("{} {}. {}", marker, i + 1, e.name)).style(style)
         })
         .collect();
@@ -245,7 +257,11 @@ fn draw_main_ui(
             } else {
                 Style::default().fg(Color::White)
             };
-            let marker = if e.id == current_boot_id { " →" } else { "  "};
+            let marker = if e.id == current_boot_id {
+                " →"
+            } else {
+                "  "
+            };
             ListItem::new(format!("{} {}", marker, e.name)).style(style)
         })
         .collect();
@@ -257,11 +273,12 @@ fn draw_main_ui(
     };
 
     f.render_widget(
-        List::new(boot_once_items)
-            .block(Block::default()
+        List::new(boot_once_items).block(
+            Block::default()
                 .title(" Boot To ")
                 .borders(Borders::ALL)
-                .border_style(boot_to_border_style)),
+                .border_style(boot_to_border_style),
+        ),
         layout[2],
     );
 
@@ -323,11 +340,7 @@ fn draw_password_popup(f: &mut ratatui::Frame, area: Rect, password: &str, show:
 
     f.render_widget(
         Paragraph::new(format!(" {}", displayed))
-            .style(
-                Style::default()
-                    .bg(Color::Cyan)
-                    .fg(Color::Black),
-            )
+            .style(Style::default().bg(Color::Cyan).fg(Color::Black))
             .alignment(Alignment::Left),
         bar_area,
     );
@@ -498,9 +511,13 @@ fn draw_countdown_screen(f: &mut ratatui::Frame, area: Rect, seconds: u8) {
         });
 
     f.render_widget(
-        Paragraph::new(format!("Rebooting in {} second{}...", seconds, if seconds == 1 { "" } else { "s" }))
-            .alignment(Alignment::Center)
-            .style(Style::default().fg(Color::White)),
+        Paragraph::new(format!(
+            "Rebooting in {} second{}...",
+            seconds,
+            if seconds == 1 { "" } else { "s" }
+        ))
+        .alignment(Alignment::Center)
+        .style(Style::default().fg(Color::White)),
         inner[0],
     );
 
@@ -508,7 +525,7 @@ fn draw_countdown_screen(f: &mut ratatui::Frame, area: Rect, seconds: u8) {
     let bar_width = (popup_width - 10) as f32 * progress;
     let filled = "█".repeat(bar_width as usize);
     let empty = "░".repeat((popup_width - 10) as usize - bar_width as usize);
-    
+
     f.render_widget(
         Paragraph::new(format!("{}{}", filled, empty))
             .alignment(Alignment::Center)
@@ -768,7 +785,8 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 match state {
                     UIState::Main => match key.code {
                         KeyCode::Char('q') => {
-                            let current_order: Vec<String> = entries.iter().map(|e| e.id.clone()).collect();
+                            let current_order: Vec<String> =
+                                entries.iter().map(|e| e.id.clone()).collect();
                             let has_changes = current_order != original_order;
                             if has_changes {
                                 state = UIState::QuitConfirm;
@@ -855,21 +873,19 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                                 let area = centered_area(f.area(), 65, 60);
                                 draw_processing_screen(f, area);
                             })?;
-                            
+
                             state = match pending_action.clone() {
                                 Action::SetOrder(order_ids) => {
                                     execute_set_boot_order(&order_ids, &password)?
                                 }
-                                Action::BootOnce(id) => {
-                                    execute_boot_once(&id, &password)?
-                                }
+                                Action::BootOnce(id) => execute_boot_once(&id, &password)?,
                                 Action::None => UIState::Main,
                             };
-                            
+
                             if matches!(state, UIState::PasswordError | UIState::ErrorMessage(_)) {
                                 password.clear();
                             }
-                        },
+                        }
                         KeyCode::Char(c) => password.push(c),
                         _ => {}
                     },
@@ -917,7 +933,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                             }
                         }
                         _ => {}
-                    }
+                    },
 
                     UIState::Help => {
                         state = UIState::Main;
