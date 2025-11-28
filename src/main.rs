@@ -219,11 +219,18 @@ fn draw_main_ui(
         })
         .collect();
 
+    let priority_border_style = if matches!(focus, Focus::Priority) {
+        Style::default().fg(Color::White)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
     f.render_widget(
         List::new(priority_items).block(
             Block::default()
                 .title(" Boot Priority (default order) ")
-                .borders(Borders::ALL),
+                .borders(Borders::ALL)
+                .border_style(priority_border_style),
         ),
         layout[1],
     );
@@ -243,9 +250,18 @@ fn draw_main_ui(
         })
         .collect();
 
+    let boot_to_border_style = if matches!(focus, Focus::BootOnce) {
+        Style::default().fg(Color::White)
+    } else {
+        Style::default().fg(Color::DarkGray)
+    };
+
     f.render_widget(
         List::new(boot_once_items)
-            .block(Block::default().title(" Boot To ").borders(Borders::ALL)),
+            .block(Block::default()
+                .title(" Boot To ")
+                .borders(Borders::ALL)
+                .border_style(boot_to_border_style)),
         layout[2],
     );
 
