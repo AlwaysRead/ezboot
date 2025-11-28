@@ -1,6 +1,6 @@
-# EzBoot
+# SwiftBoot
 
-A fast, intuitive TUI (Terminal User Interface) tool for managing UEFI boot configuration. Built with Rust for performance and safety, EzBoot makes boot management simple and visual—no more memorizing `efibootmgr` commands or dealing with bulky GUI tools.
+A fast, intuitive TUI (Terminal User Interface) tool for managing UEFI boot configuration. Built with Rust for performance and safety, SwiftBoot makes boot management simple and visual—no more memorizing `efibootmgr` commands or dealing with bulky GUI tools.
 
 ## Features
 
@@ -11,13 +11,13 @@ A fast, intuitive TUI (Terminal User Interface) tool for managing UEFI boot conf
 ## Screenshots
 
 <p align="center">
-  <img src="assets/ss1.png" alt="EzBoot Main Interface" width="700"/>
+  <img src="assets/ss1.png" alt="SwiftBoot Main Interface" width="700"/>
   <br>
   <em>Main Interface</em>
 </p>
 
 <p align="center">
-  <img src="assets/ss2.png" alt="EzBoot Options Menu" width="700"/>
+  <img src="assets/ss2.png" alt="SwiftBoot Options Menu" width="700"/>
   <br>
   <em>Options Menu</em>
 </p>
@@ -37,23 +37,23 @@ A fast, intuitive TUI (Terminal User Interface) tool for managing UEFI boot conf
 ### Quick Install
 
 ```bash
-git clone https://github.com/AlwaysRead/ezboot.git
-cd ezboot
+git clone https://github.com/AlwaysRead/swiftboot.git
+cd swiftboot
 ./install.sh
 ```
 
 The installation script will:
 - Check for required dependencies
 - Build the optimized release binary
-- Install to `/usr/local/bin/ezboot`
+- Install to `/usr/local/bin/swiftboot`
 
 ### Manual Installation
 
 ```bash
-git clone https://github.com/AlwaysRead/ezboot.git
-cd ezboot
+git clone https://github.com/AlwaysRead/swiftboot.git
+cd swiftboot
 cargo build --release
-sudo install -m 755 target/release/ezboot /usr/local/bin/ezboot
+sudo install -m 755 target/release/swiftboot /usr/local/bin/swiftboot
 ```
 
 ### Uninstallation
@@ -64,15 +64,15 @@ sudo install -m 755 target/release/ezboot /usr/local/bin/ezboot
 
 Or manually:
 ```bash
-sudo rm /usr/local/bin/ezboot
+sudo rm /usr/local/bin/swiftboot
 ```
 
 ## Usage
 
-Launch EzBoot from your terminal:
+Launch SwiftBoot from your terminal:
 
 ```bash
-ezboot
+swiftboot
 ```
 
 ### Keyboard Shortcuts
@@ -105,7 +105,7 @@ ezboot
 
 ## How It Works
 
-1. **View Boot Entries** - EzBoot reads your UEFI boot configuration using `efibootmgr`
+1. **View Boot Entries** - SwiftBoot reads your UEFI boot configuration using `efibootmgr`
 2. **Modify Order** - Reorder entries in the Boot Priority panel using `u/d` keys
 3. **Apply Changes** - Press `Enter` to save changes (requires sudo password)
 4. **Boot To** - Select an entry in Boot To panel and press `Enter` to boot directly to that OS

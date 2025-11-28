@@ -1,5 +1,5 @@
 [package]
-name = "ezboot"
+name = "swiftboot"
 version = "0.1.0"
 edition = "2024"
 
@@ -9,5 +9,5 @@ crossterm = "0.27"
 regex = "1"
 
 [[bin]]
-name = "ezboot"
+name = "swiftboot"
 path = "src/main.rs"

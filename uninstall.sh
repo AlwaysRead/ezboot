@@ -14,13 +14,13 @@ if [ "$EUID" -eq 0 ]; then
     exit 1
 fi
 
-# Check if ezboot is installed
-if [ ! -f "/usr/local/bin/ezboot" ]; then
-    echo -e "${YELLOW}ezboot is not installed in /usr/local/bin${NC}"
+# Check if swiftboot is installed
+if [ ! -f "/usr/local/bin/swiftboot" ]; then
+    echo -e "${YELLOW}swiftboot is not installed in /usr/local/bin${NC}"
     exit 1
 fi
 
-echo -e "${YELLOW}Removing ezboot from /usr/local/bin...${NC}"
-sudo rm -f /usr/local/bin/ezboot
+echo -e "${YELLOW}Removing swiftboot from /usr/local/bin...${NC}"
+sudo rm -f /usr/local/bin/swiftboot
 
 echo -e "${GREEN}✓ Uninstallation complete!${NC}"

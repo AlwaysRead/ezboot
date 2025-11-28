@@ -33,15 +33,15 @@ if ! command -v efibootmgr &> /dev/null; then
     fi
 fi
 
-echo -e "${CYAN}Building ezboot...${NC}"
+echo -e "${CYAN}Building swiftboot...${NC}"
 cargo build --release
 
-echo -e "${CYAN}Installing ezboot to /usr/local/bin...${NC}"
-sudo install -m 755 target/release/ezboot /usr/local/bin/ezboot
+echo -e "${CYAN}Installing swiftboot to /usr/local/bin...${NC}"
+sudo install -m 755 target/release/swiftboot /usr/local/bin/swiftboot
 
 echo -e "${GREEN}✓ Installation complete!${NC}"
 echo
-echo "You can now run ezboot with:"
-echo -e "  ${CYAN}ezboot${NC}"
+echo "You can now run swiftboot with:"
+echo -e "  ${CYAN}swiftboot${NC}"
 echo
-echo "Note: ezboot requires sudo privileges to modify boot settings"
+echo "Note: swiftboot requires sudo privileges to modify boot settings"
