@@ -11,15 +11,15 @@ A fast, intuitive TUI (Terminal User Interface) tool for managing UEFI boot conf
 ## Screenshots
 
 <p align="center">
-  <img src="assets/ss1.png" alt="SwiftBoot Main Interface" width="700"/>
+  <img src="assets/ss1.png" alt="SwiftBoot Boot Order Interface" width="700"/>
   <br>
-  <em>Main Interface</em>
+  <em>Change the Boot Order (Priority) </em>
 </p>
 
 <p align="center">
-  <img src="assets/ss2.png" alt="SwiftBoot Options Menu" width="700"/>
+  <img src="assets/ss2.png" alt="SwiftBoot Quick Boot width="700"/>
   <br>
-  <em>Options Menu</em>
+  <em>Quick Boot to OS</em>
 </p>
 
 ## Installation
@@ -126,18 +126,6 @@ swiftboot
 - Boot order changes require a reboot to take effect
 - "Boot To" directly reboots to the selected OS
 
-## Built With
-
-- [Rust](https://www.rust-lang.org/) - Systems programming language
-- [Ratatui](https://github.com/ratatui-org/ratatui) - Terminal UI framework
-- [Crossterm](https://github.com/crossterm-rs/crossterm) - Cross-platform terminal manipulation
-
 ## Contributing
 
 Contributions are welcome! Feel free to open an issue or submit a pull request.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
